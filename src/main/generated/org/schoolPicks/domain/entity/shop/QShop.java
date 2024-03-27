@@ -1,4 +1,4 @@
-package org.schoolPicks.entity;
+package org.schoolPicks.domain.entity.shop;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,9 +15,11 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QShop extends EntityPathBase<Shop> {
 
-    private static final long serialVersionUID = -666868569L;
+    private static final long serialVersionUID = -1181933549L;
 
     public static final QShop shop = new QShop("shop");
+
+    public final TimePath<java.time.LocalTime> closeTime = createTime("closeTime", java.time.LocalTime.class);
 
     public final StringPath description = createString("description");
 
@@ -26,6 +28,8 @@ public class QShop extends EntityPathBase<Shop> {
     public final StringPath menuDescription = createString("menuDescription");
 
     public final StringPath name = createString("name");
+
+    public final TimePath<java.time.LocalTime> openTime = createTime("openTime", java.time.LocalTime.class);
 
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 

@@ -1,10 +1,10 @@
 package repository;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.schoolPicks.entity.SchoolType;
-import org.schoolPicks.entity.Shop;
-import org.schoolPicks.entity.ShopType;
-import org.schoolPicks.repository.ShopRepository;
+import org.schoolPicks.domain.entity.shop.SchoolType;
+import org.schoolPicks.domain.entity.shop.Shop;
+import org.schoolPicks.domain.entity.shop.ShopType;
+import org.schoolPicks.domain.repository.shop.ShopRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;

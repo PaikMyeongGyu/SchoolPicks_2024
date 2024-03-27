@@ -1,16 +1,18 @@
-package org.schoolPicks.repository;
+package org.schoolPicks.domain.repository.shop;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.schoolPicks.entity.Shop;
+import org.schoolPicks.domain.entity.shop.Shop;
+import org.schoolPicks.domain.repository.shop.condition.ShopFindCond;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Random;
 
-import static org.schoolPicks.entity.QShop.*;
+import static org.schoolPicks.domain.entity.shop.QShop.shop;
+
 
 @Repository
 @RequiredArgsConstructor
@@ -20,15 +22,16 @@ public class ShopQuerydslRepository {
 
     private Random random = new Random();
 
-    public Shop findShopPaging(ShopQuerydslDto dto){
+    public Shop findShop(ShopFindCond cond){
 
         // 모든 데이터를
-        Long shopCount = getShopCount(dto);
+        Long shopCount = getShopCount(cond);
+
         if(shopCount == 0)
             return null;
 
         int shopIndex = random.nextInt(Math.toIntExact(shopCount));
-        Shop findShop = findShopQuery(dto)
+        Shop findShop = findShopQuery(cond)
                 .offset(shopIndex)
                 .limit(1)
                 .fetchOne();
@@ -36,51 +39,61 @@ public class ShopQuerydslRepository {
         return findShop;
     }
 
-    public List<Shop> findAll(ShopQuerydslDto dto){
+    public List<Shop> findAll(ShopFindCond dto){
         return findShopQuery(dto)
                 .fetch();
     }
 
-    private Long getShopCount(ShopQuerydslDto dto) {
+    private Long getShopCount(ShopFindCond dto) {
         Long shopCount = queryFactory
                 .select(shop.count())
                 .from(shop)
                 .where(
                         priceBetween(dto),
                         schoolTypesEq(dto),
-                        shopTypesIn(dto)
+                        shopTypesIn(dto),
+                        timeAfterOpenTimeAndBeforeCloseTime(dto)
                 )
                 .fetchOne();
         return shopCount;
     }
 
-    private JPAQuery<Shop> findShopQuery(ShopQuerydslDto dto) {
+    private JPAQuery<Shop> findShopQuery(ShopFindCond dto) {
         return queryFactory
                 .select(shop)
                 .from(shop)
                 .where(
                         priceBetween(dto),
                         schoolTypesEq(dto),
-                        shopTypesIn(dto)
+                        shopTypesIn(dto),
+                        timeAfterOpenTimeAndBeforeCloseTime(dto)
                 );
     }
 
-    private static BooleanExpression shopTypesIn(ShopQuerydslDto dto) {
+    private BooleanExpression shopTypesIn(ShopFindCond dto) {
         if(dto.getShopTypes() == null)
             return null;
         return shop.shopType.in(dto.getShopTypes());
     }
 
-    private static BooleanExpression schoolTypesEq(ShopQuerydslDto dto) {
+    private BooleanExpression schoolTypesEq(ShopFindCond dto) {
         if(dto.getSchoolType() == null){
             return null;
         }
         return shop.schoolType.eq(dto.getSchoolType());
     }
 
-    private static BooleanExpression priceBetween(ShopQuerydslDto dto) {
+    private BooleanExpression priceBetween(ShopFindCond dto) {
         if(dto.getPriceMin() == null || dto.getPriceMax() == null)
             return null;
         return shop.price.between(dto.getPriceMin(), dto.getPriceMax());
+    }
+
+    private BooleanExpression timeAfterOpenTimeAndBeforeCloseTime(ShopFindCond dto){
+        if(dto.getCurrentTime() == null){
+            return null;
+        }
+        return shop.openTime.after(dto.getCurrentTime())
+                .and(shop.closeTime.before(dto.getCurrentTime()));
     }
 }

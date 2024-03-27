@@ -1,6 +1,6 @@
-package org.schoolPicks.repository;
+package org.schoolPicks.domain.repository.shop;
 
-import org.schoolPicks.entity.Shop;
+import org.schoolPicks.domain.entity.shop.Shop;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

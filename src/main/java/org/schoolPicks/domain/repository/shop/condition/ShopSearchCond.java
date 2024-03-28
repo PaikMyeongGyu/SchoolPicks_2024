@@ -1,6 +1,5 @@
 package org.schoolPicks.domain.repository.shop.condition;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.schoolPicks.domain.entity.shop.SchoolType;
@@ -10,7 +9,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Data
-public class ShopFindCond {
+public class ShopSearchCond {
 
     private SchoolType schoolType;
     private List<ShopType> shopTypes;
@@ -19,7 +18,7 @@ public class ShopFindCond {
     private LocalTime currentTime;
 
     @Builder
-    public ShopFindCond(SchoolType schoolType, List<ShopType> shopTypes, Integer priceMin, Integer priceMax, LocalTime currentTime) {
+    public ShopSearchCond(SchoolType schoolType, List<ShopType> shopTypes, Integer priceMin, Integer priceMax, LocalTime currentTime) {
         this.schoolType = schoolType;
         this.shopTypes = shopTypes;
         this.priceMin = priceMin;

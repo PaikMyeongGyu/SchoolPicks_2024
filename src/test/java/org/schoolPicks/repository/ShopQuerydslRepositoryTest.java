@@ -54,6 +54,7 @@ class ShopQuerydslRepositoryTest {
         // when
         List<Shop> shops = shopQuerydslRepository.findAllBySearchCond(cond);
 
+        // then
         assertThat(shops).hasSize(3)
                 .extracting("name", "price", "schoolType")
                 .containsExactlyInAnyOrder(
@@ -93,19 +94,19 @@ class ShopQuerydslRepositoryTest {
     Collection<DynamicTest> findByTimeDynamicTest(){
         // given
         Shop shop1 = createShop("식당1", 0, null, null,
-                LocalTime.of(1, 0), LocalTime.of(8, 0));
+                LocalTime.of(4, 30), LocalTime.of(8, 0));
         Shop shop2 = createShop("식당2", 0, null, null,
                 LocalTime.of(8, 0), LocalTime.of(16, 0));
         Shop shop3 = createShop("식당3", 0, null, null,
                 LocalTime.of(16, 0), LocalTime.of(23, 0));
-        shopRepository.saveAll(List.of(shop1, shop2, shop3));
+        Shop shop4 = createShop("식당4", 0, null, null,
+                LocalTime.of(17, 0), LocalTime.of(4, 0));
+        shopRepository.saveAll(List.of(shop1, shop2, shop3, shop4));
 
 
         return List.of(
                 DynamicTest.dynamicTest("식당 운영 시간에는 식당이 검색된다.", () ->{
-                    ShopSearchCond cond = ShopSearchCond.builder()
-                            .currentTime(LocalTime.of(5, 0))
-                            .build();
+                    ShopSearchCond cond = createTimeSearchCond(LocalTime.of(5, 0));
 
                     // when
                     List<Shop> shops = shopQuerydslRepository.findAllBySearchCond(cond);
@@ -117,14 +118,36 @@ class ShopQuerydslRepositoryTest {
                             );
                 }),
                 DynamicTest.dynamicTest("식당 운영 시작 시간과 운영 종료 시간엔 식당이 검색되지 않는다.", () ->{
-                    ShopSearchCond cond = ShopSearchCond.builder()
-                            .currentTime(LocalTime.of(8, 0))
-                            .build();
+                    ShopSearchCond cond = createTimeSearchCond(LocalTime.of(8, 0));
 
                     // when
                     List<Shop> shops = shopQuerydslRepository.findAllBySearchCond(cond);
 
                     assertThat(shops).hasSize(0);
+                }),
+                DynamicTest.dynamicTest("영업시간이 다음날 새벽까지인 식당은 자정전에 검색이 되어야 한다.", () ->{
+                    ShopSearchCond cond = createTimeSearchCond(LocalTime.of(23, 59));
+
+                    // when
+                    List<Shop> shops = shopQuerydslRepository.findAllBySearchCond(cond);
+
+                    assertThat(shops).hasSize(1)
+                            .extracting("name", "price")
+                            .containsExactlyInAnyOrder(
+                                    tuple("식당4", 0)
+                            );
+                }),
+                DynamicTest.dynamicTest("영업시간이 다음날 새벽까지인 식당은 자정이 지난 이후 영업종료 전에 검색이 되어야 한다.", () ->{
+                    ShopSearchCond cond = createTimeSearchCond(LocalTime.of(3, 59));
+
+                    // when
+                    List<Shop> shops = shopQuerydslRepository.findAllBySearchCond(cond);
+
+                    assertThat(shops).hasSize(1)
+                            .extracting("name", "price")
+                            .containsExactlyInAnyOrder(
+                                    tuple("식당4", 0)
+                            );
                 })
         );
     }
@@ -283,6 +306,12 @@ class ShopQuerydslRepositoryTest {
                             );
                 })
         );
+    }
+
+    private ShopSearchCond createTimeSearchCond(LocalTime time) {
+        return ShopSearchCond.builder()
+                .currentTime(time)
+                .build();
     }
 
     private Shop createShop(String name, int price, ShopType shopType, SchoolType schoolType,

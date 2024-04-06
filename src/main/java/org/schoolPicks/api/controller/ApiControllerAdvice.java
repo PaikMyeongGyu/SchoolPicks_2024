@@ -1,6 +1,7 @@
 package org.schoolPicks.api.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,21 +13,17 @@ public class ApiControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
-    public ApiResponse<Object> bindException(BindException e){
-        return ApiResponse.of(
-                HttpStatus.BAD_REQUEST,
-                e.getBindingResult().getAllErrors().get(0).getDefaultMessage(),
-                null
-        );
+    public ResponseEntity<Object> bindException(BindException e){
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
+                e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ApiResponse<Object> IllegalArgumentException(BindException e){
-        return ApiResponse.of(
-                HttpStatus.BAD_REQUEST,
-                e.getBindingResult().getAllErrors().get(0).getDefaultMessage(),
-                null
-        );
+    public ResponseEntity<Object> IllegalArgumentException(Exception e){
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
+                e.getMessage());
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 }

@@ -1,0 +1,24 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= CafeKiosk REST API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[Shop-API]]
+== Shop API
+
+[[shop-search]]
+=== 가게 검색
+
+==== HTTP Request
+include::{snippets}/shop-search/http-request.adoc[]
+include::{snippets}/shop-search/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/shop-search/http-response.adoc[]
+include::{snippets}/shop-search/response-fields.adoc[]

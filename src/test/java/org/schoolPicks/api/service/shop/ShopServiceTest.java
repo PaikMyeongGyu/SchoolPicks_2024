@@ -31,6 +31,7 @@ class ShopServiceTest {
 
     @AfterEach
     void tearDown(){
+        shopRepository.deleteAll();
         shopRepository.deleteAllInBatch();
     }
 

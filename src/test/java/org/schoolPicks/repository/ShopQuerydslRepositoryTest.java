@@ -11,12 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.schoolPicks.domain.entity.shop.SchoolType.*;
 import static org.schoolPicks.domain.entity.shop.ShopType.*;
 
@@ -28,7 +30,6 @@ class ShopQuerydslRepositoryTest {
 
     @Autowired
     ShopRepository shopRepository;
-
 
     @AfterEach
     void tearDown(){
@@ -68,9 +69,9 @@ class ShopQuerydslRepositoryTest {
     @Test
     void findByPrice(){
         // given
-        Shop shop1 = createShopWithOutTime("식당1", 1000, RESTAURANT, NSC);
-        Shop shop2 = createShopWithOutTime("식당2", 2000, CAFE, NSC);
-        Shop shop3 = createShopWithOutTime("식당3", 3000, PUB, NSC);
+        Shop shop1 = createShopWithOutTime("식당1", 1000);
+        Shop shop2 = createShopWithOutTime("식당2", 2000);
+        Shop shop3 = createShopWithOutTime("식당3", 3000);
         shopRepository.saveAll(List.of(shop1, shop2, shop3));
 
         ShopSearchCond cond = ShopSearchCond.builder()
@@ -82,10 +83,10 @@ class ShopQuerydslRepositoryTest {
         List<Shop> shops = shopQuerydslRepository.findAllBySearchCond(cond);
 
         assertThat(shops).hasSize(2)
-                .extracting("name", "price", "schoolType")
+                .extracting("name", "price")
                 .containsExactlyInAnyOrder(
-                        tuple("식당1", 1000, NSC),
-                        tuple("식당2", 2000, NSC)
+                        tuple("식당1", 1000),
+                        tuple("식당2", 2000)
                 );
     }
 
@@ -332,6 +333,13 @@ class ShopQuerydslRepositoryTest {
                 .price(price)
                 .shopType(shopType)
                 .schoolType(schoolType)
+                .build();
+    }
+
+    private Shop createShopWithOutTime(String name, int price) {
+        return Shop.builder()
+                .name(name)
+                .price(price)
                 .build();
     }
 }

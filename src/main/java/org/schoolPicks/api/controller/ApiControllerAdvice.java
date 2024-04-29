@@ -11,17 +11,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApiControllerAdvice {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<Object> bindException(BindException e){
+    public ResponseEntity<Object> bindException(BindException e) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
                 e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> IllegalArgumentException(Exception e){
+    public ResponseEntity<Object> IllegalArgumentException(Exception e) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
                 e.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);

@@ -18,16 +18,15 @@ public class ShopController {
     private final ShopService shopService;
 
     @GetMapping("/api/findShop")
-    public ResponseEntity<ShopSearchResponse> findShop(@Valid @ModelAttribute ShopSearchRequest request){
+    public ResponseEntity<ShopSearchResponse> findShop(@Valid @ModelAttribute ShopSearchRequest request) {
         ShopSearchServiceRequest serviceRequest = request.toServiceRequest();
 
         Shop findShop = shopService.findRandomShop(serviceRequest);
-        if(findShop == null){
+        if (findShop == null) {
             throw new IllegalArgumentException("조회된 값이 없습니다. 설정 값을 변경해주세요.");
         }
 
         ShopSearchResponse response = new ShopSearchResponse(findShop);
         return ResponseEntity.ok(response);
     }
-
 }

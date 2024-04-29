@@ -10,7 +10,7 @@ public class ShopSearchResponse {
     String shopName;
     int price;
 
-    public ShopSearchResponse(Shop shop){
+    public ShopSearchResponse(Shop shop) {
         this.shopName = shop.getName();
         this.price = shop.getPrice();
     }

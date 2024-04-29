@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = ShopController.class)
 class ShopControllerTest {
+
     @Autowired
     protected MockMvc mockMvc;
 

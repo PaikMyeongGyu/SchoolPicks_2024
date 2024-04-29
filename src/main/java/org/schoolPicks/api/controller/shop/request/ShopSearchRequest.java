@@ -31,16 +31,16 @@ public class ShopSearchRequest {
     @NotNull(message = "실시간 설정은 필수입니다.")
     private Boolean realTime;
 
-    @AssertTrue( message = "최소값은 최대값을 넘을 수 없습니다.")
-    public boolean isValidPrice(){
-        if(priceMin != null && priceMax != null)
-            return priceMin < priceMax;
+    @AssertTrue(message = "최소값은 최대값을 넘을 수 없습니다.")
+    public boolean isValidPrice() {
+        if (priceMin == null || priceMax == null)
+            return true;
 
-        return false;
+        return priceMin < priceMax;
     }
 
-    public ShopSearchServiceRequest toServiceRequest(){
-        if(realTime){
+    public ShopSearchServiceRequest toServiceRequest() {
+        if (realTime) {
             return ShopSearchServiceRequest.builder()
                     .schoolType(schoolType)
                     .shopTypes(shopTypes)
